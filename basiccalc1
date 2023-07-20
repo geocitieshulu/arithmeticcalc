@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arithmetic Math Quiz</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background-color: #f6f6f6;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f3f3f3;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+        }
+
+        .question {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .operand {
+            font-weight: bold;
+            color: #ff5050;
+        }
+
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        .number-pad button {
+            padding: 12px 20px;
+            font-size: 24px;
+            background-color: #ff9900;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .number-pad button:hover {
+            background-color: #ff6600;
+        }
+
+        .message {
+            font-size: 28px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        .message.correct {
+            color: #008000;
+        }
+
+        .message.wrong {
+            color: #ff0000;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            padding: 12px 24px;
+            font-size: 20px;
+            background-color: #4169e1;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container button:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #3558d3;
+        }
+
+        .timer {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .marks {
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+    <script>
+        var currentQuestion = null;
+        var encouragementMessages = [
+            'Great job! You\'re a math wizard!',
+            'Superb! You\'re on the right track!',
+            'Amazing work! Keep it up!',
+            'Awesome job! You\'re getting better!',
+            'Fantastic! Math is fun, right?',
+            'Well done! You\'re a math superstar!',
+            'Brilliant! You\'re a natural at this!',
+            'Impressive work! Keep challenging yourself!',
+            'Excellent! Math skills for the win!',
+            'Outstanding! Math is your superpower!'
+        ];
+
+        var totalQuestions = 0;
+        var correctAnswers = 0;
+
+        function getRandomEncouragementMessage() {
+            return encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+        }
+
+        function generateQuestion() {
+            var operand1 = Math.floor(Math.random() * 20) + 1; // Random number between 1 and 20
+            var operand2 = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+            var operator = '*';
+            var answer = operand1 * operand2;
+
+            var question = '<span class="operand">' + operand1 + '</span> ' + operator + ' <span class="operand">' + operand2 + '</span>';
+
+            currentQuestion = {
+                question: question,
+                answer: answer.toString()
+            };
+
+            document.getElementById('question').innerHTML = question;
+            document.getElementById('answer').value = '';
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('message').classList.remove('correct', 'wrong');
+        }
+
+        function checkAnswer() {
+            var userAnswer = document.getElementById('answer').value;
+
+            if (userAnswer === currentQuestion.answer) {
+                var messageElement = document.getElementById('message');
+                messageElement.innerHTML = getRandomEncouragementMessage();
+                messageElement.classList.remove('wrong');
+                messageElement.classList.add('correct');
+                correctAnswers++;
+                setTimeout(function () {
+                    messageElement.innerHTML = '';
+                    generateQuestion();
+                }, 2000);
+            } else {
+                document.getElementById('message').innerHTML = 'Oops! Wrong answer. Try again!';
+                document.getElementById('message').classList.remove('correct');
+                document.getElementById('message').classList.add('wrong');
+            }
+        }
+
+        function skipQuestion() {
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('message').classList.remove('correct', 'wrong');
+            generateQuestion();
+        }
+
+        function appendNumber(number) {
+            document.getElementById('answer').value += number;
+        }
+
+        function clearInput() {
+            document.getElementById('answer').value = '';
+        }
+
+        function startTimer() {
+            var timeLeft = 120;
+            var timerElement = document.getElementById('timer');
+
+            var timer = setInterval(function () {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerElement.innerHTML = 'Time\'s up!';
+                    showTotalMarks();
+                } else {
+                    timerElement.innerHTML = 'Time left: ' + timeLeft + 's';
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+
+        function showTotalMarks() {
+            document.getElementById('marks').innerHTML = 'Total Marks: ' + (correctAnswers * 10);
+        }
+
+        window.onload = function () {
+            generateQuestion();
+            startTimer();
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <p class="question" id="question"></p>
+        <div>
+            <input type="text" class="answer-input" id="answer" readonly>
+        </div>
+        <div class="number-pad">
+            <button onclick="appendNumber(1)" style="background-color: #ff7f50;">1</button>
+            <button onclick="appendNumber(2)" style="background-color: #ffd700;">2</button>
+            <button onclick="appendNumber(3)" style="background-color: #00bfff;">3</button>
+            <button onclick="appendNumber(4)" style="background-color: #7cfc00;">4</button>
+            <button onclick="appendNumber(5)" style="background-color: #ff69b4;">5</button>
+            <button onclick="appendNumber(6)" style="background-color: #9370db;">6</button>
+            <button onclick="appendNumber(7)" style="background-color: #ffa500;">7</button>
+            <button onclick="appendNumber(8)" style="background-color: #40e0d0;">8</button>
+            <button onclick="appendNumber(9)" style="background-color: #ff4500;">9</button>
+            <button onclick="clearInput()" style="background-color: #808080;">Clear</button>
+            <button onclick="appendNumber(0)" style="background-color: #f08080;">0</button>
+            <button onclick="checkAnswer()" style="background-color: #32cd32;">Submit</button>
+        </div>
+        <div class="button-container">
+            <button class="button" onclick="skipQuestion()">Skip</button>
+        </div>
+        <p class="message" id="message"></p>
+        <p class="timer" id="timer"></p>
+        <p class="marks" id="marks"></p>
+    </div>
+
+    <script>
+        generateQuestion();
+        startTimer();
+    </script>
+</body>
+</html>
